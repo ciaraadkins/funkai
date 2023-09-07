@@ -1,6 +1,7 @@
 # core.py
 
 import openai
+import ast
 
 FUNKAI_PRESETS = {}  # Empty dictionary to hold predefined functions
 
@@ -25,41 +26,6 @@ def funkai_main(sys_cont,input):
         ])
 
     return gpt_response
-
-# https://openai.com/pricing
-# https://platform.openai.com/docs/models
-
-def clean_gpt_response(response):
-  model = response['model']
-  if model.startswith("gpt-3.5-turbo"):
-    text = response['choices'][0]['message']['content']
-    return text
-  elif model.startswith("text-davinci"):
-    text = response['choices'][0]['text']
-    return text
-  else:
-    print("Not 'gpt-3.5' or 'davinci' model")
-    return
-
-# text = getTextResponse(response)
-
-def convert_output(output_str, target_dtype):
-    """
-    Convert the raw output string to the desired data type.
-    Handle special cases for common data types.
-    """
-    if target_dtype == bool:
-        if output_str.lower() in ["true", "yes", "1"]:
-            return True
-        elif output_str.lower() in ["false", "no", "0"]:
-            return False
-        else:
-            raise ValueError(f"Cannot convert '{output_str}' to bool")
-
-    # Additional type-specific conversions can be added here as needed.
-    
-    # For other data types, try direct conversion
-    return target_dtype(output_str)
 
 def funktion(input, funk):
     """
@@ -121,3 +87,75 @@ def remove_funk(name):
         raise ValueError(f"Preset '{name}' not found. Cannot remove.")
     
     del FUNKAI_PRESETS[name]
+
+# https://openai.com/pricing
+# https://platform.openai.com/docs/models
+
+def clean_gpt_response(response):
+  model = response['model']
+  if model.startswith("gpt-3.5-turbo"):
+    text = response['choices'][0]['message']['content']
+    return text
+  elif model.startswith("text-davinci"):
+    text = response['choices'][0]['text']
+    return text
+  else:
+    print("Not 'gpt-3.5' or 'davinci' model")
+    return
+
+def convert_output(output_str, target_dtype):
+    """
+    Convert the raw output string to the desired data type.
+    Handle special cases for common data types.
+    """
+    if target_dtype == bool:
+        if output_str.lower() in ["true", "yes", "1"]:
+            return True
+        elif output_str.lower() in ["false", "no", "0"]:
+            return False
+        else:
+            raise ValueError(f"Cannot convert '{output_str}' to bool")
+    
+    elif target_dtype in [list, tuple, set, frozenset, dict]:
+        try:
+            # Convert string representation to actual data structure
+            return target_dtype(ast.literal_eval(output_str))
+        except (ValueError, SyntaxError):
+            raise ValueError(f"Cannot convert '{output_str}' to {target_dtype}")
+
+    elif target_dtype == bytes:
+        try:
+            # Convert string representation of bytes (b'...') to actual bytes
+            return ast.literal_eval(output_str)
+        except (ValueError, SyntaxError):
+            raise ValueError(f"Cannot convert '{output_str}' to bytes")
+
+    elif target_dtype == bytearray:
+        try:
+            # Convert string representation of bytes (b'...') to actual bytearray
+            return bytearray(ast.literal_eval(output_str))
+        except (ValueError, SyntaxError):
+            raise ValueError(f"Cannot convert '{output_str}' to bytearray")
+    
+    elif target_dtype == memoryview:
+        try:
+            # Convert string representation of bytes (b'...') to actual memoryview
+            return memoryview(ast.literal_eval(output_str))
+        except (ValueError, SyntaxError):
+            raise ValueError(f"Cannot convert '{output_str}' to memoryview")
+
+    elif target_dtype == range:
+        try:
+            # Convert string representation of list/tuple to range
+            items = ast.literal_eval(output_str)
+            if not isinstance(items, (list, tuple)) or len(items) not in [1, 2, 3]:
+                raise ValueError
+            return range(*items)
+        except (ValueError, SyntaxError):
+            raise ValueError(f"Cannot convert '{output_str}' to range")
+    
+    # For basic types like int, float, str, complex
+    try:
+        return target_dtype(output_str)
+    except ValueError:
+        raise ValueError(f"Cannot convert '{output_str}' to {target_dtype}")

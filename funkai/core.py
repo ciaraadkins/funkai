@@ -106,3 +106,18 @@ def add_funk(name, operation, input_dtype=str, output_dtype=str):
         "input_dtype": input_dtype,
         "output_dtype": output_dtype
     }
+
+def remove_funk(name):
+    """
+    Removes a predefined function from the FUNKAI_PRESETS.
+
+    Args:
+    - name (str): The name of the function preset to remove.
+
+    Raises:
+    - ValueError: If the preset with the given name is not found.
+    """
+    if name not in FUNKAI_PRESETS:
+        raise ValueError(f"Preset '{name}' not found. Cannot remove.")
+    
+    del FUNKAI_PRESETS[name]

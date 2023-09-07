@@ -43,6 +43,24 @@ def clean_gpt_response(response):
 
 # text = getTextResponse(response)
 
+def convert_output(output_str, target_dtype):
+    """
+    Convert the raw output string to the desired data type.
+    Handle special cases for common data types.
+    """
+    if target_dtype == bool:
+        if output_str.lower() in ["true", "yes", "1"]:
+            return True
+        elif output_str.lower() in ["false", "no", "0"]:
+            return False
+        else:
+            raise ValueError(f"Cannot convert '{output_str}' to bool")
+
+    # Additional type-specific conversions can be added here as needed.
+    
+    # For other data types, try direct conversion
+    return target_dtype(output_str)
+
 def funktion(input, funk):
     """
     Uses a predefined operation to get a response based on input.
@@ -72,7 +90,7 @@ def funktion(input, funk):
     
     # Convert the output to the desired data type
     try:
-        return output_dtype(raw_output_str)
+        return convert_output(raw_output_str, output_dtype)
     except ValueError:
         raise TypeError(f"Failed to convert output to {output_dtype}. Raw output: {raw_output_str}")
 

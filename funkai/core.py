@@ -1,5 +1,7 @@
 # core.py
 
+import openai
+
 FUNKAI_PRESETS = {}  # Empty dictionary to hold predefined functions
 
 def funkai_main(sys_cont,input):

@@ -71,8 +71,8 @@ def funktion(input, funk):
         raise ValueError(f"Preset '{funk}' not found.")
     
     operation = preset["operation"]
-    input_dtype = preset["input_dtype"]
-    output_dtype = preset["output_dtype"]
+    input_dtype = preset.get("input_dtype", str)
+    output_dtype = preset.get("output_dtype", str)
 
     # Check input data types
     if not isinstance(input, input_dtype):
@@ -94,7 +94,7 @@ def funktion(input, funk):
     except ValueError:
         raise TypeError(f"Failed to convert output to {output_dtype}. Raw output: {raw_output_str}")
 
-def add_funk(name, operation, input_dtype, output_dtype):
+def add_funk(name, operation, input_dtype=str, output_dtype=str):
     """
     Adds a predefined function to the FUNKAI_PRESETS.
     """

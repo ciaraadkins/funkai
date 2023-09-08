@@ -161,7 +161,7 @@ def remove_funk(name):
     
     del FUNKAI_PRESETS[name]
 
-def funk_details(name=None):
+def funk_details(name):
     """
     Returns a specific preset or all presets in FUNKAI_PRESETS.
     

@@ -252,7 +252,8 @@ def convert_output(output_str, target_dtype):
 
 def approx_cost():
     """Prints the accumulated cost information for the session."""
-    for run in cost_information["runs"]:
-        print(run)
+    # for run in cost_information["runs"]:
+    #     print(run)
     print(f"Total tokens used this session: {cost_information['total_tokens']}")
     print(f"Approximate cost for this session: ${cost_information['approx_total_cost']:.2f}")
+    return cost_information

@@ -1,5 +1,4 @@
 # core.py
-
 import openai
 import ast
 import datetime
@@ -103,7 +102,7 @@ def funktion(input, funk, print_cost=False):
     if print_cost:
         print(f"Tokens used for this call: {tokens_used}")
         print(f"Total tokens used this session: {cost_information['total_tokens']}")
-        print(f"Approximate cost for this session: ${cost_information['approx_cost']:.2f}")
+        print(f"Approximate cost for this session: ${cost_information['approx_total_cost']:.2f}")
     
     # Convert the output to the desired data type
     try:

@@ -96,7 +96,6 @@ def update_funk(name, operation=None, input_dtype=None, output_dtype=None):
     
     FUNKAI_PRESETS[name] = preset
 
-
 def remove_funk(name):
     """
     Removes a predefined function from the FUNKAI_PRESETS.
@@ -112,12 +111,25 @@ def remove_funk(name):
     
     del FUNKAI_PRESETS[name]
 
-def show_funks():
+def funk_details(name=None):
     """
-    Returns all the predefined functions in FUNKAI_PRESETS.
+    Returns a specific preset or all presets in FUNKAI_PRESETS.
+    
+    Args:
+    - name (str, optional): The name of the preset to retrieve.
+    
+    Returns:
+    - dict or str: Either the specified preset, all presets, or an error message.
     """
+    
+    if name:
+        preset = FUNKAI_PRESETS.get(name)
+        if not preset:
+            return f"Preset '{name}' not found."
+        return {name: preset}
+    
+    # If name is not provided, return all presets
     return FUNKAI_PRESETS
-
 
 # https://openai.com/pricing
 # https://platform.openai.com/docs/models

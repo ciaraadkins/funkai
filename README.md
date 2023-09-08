@@ -43,21 +43,36 @@ pip install funkai
 
 ## Documentation
 
-### `funktion(input, funk)`
-
+### funktion(input, funk, print_cost=False)
 Uses a predefined operation to generate a response based on the input.
+- input: The input value for the operation.
+- funk: The name of the predefined function to be used.
+- print_cost: (Optional) A flag to indicate if the token and cost information should be printed.
 
-- `input`: The input data.
-- `funk`: The name of the predefined function to be used.
-
-### `add_funk(name, operation, input_dtype, output_dtype)`
-
+### add_funk(name, operation, input_dtype=str, output_dtype=str)
 Define a new preset function.
+- name: The name of the function preset.
+- operation: The description of the function's purpose.
+- input_dtype: (Optional) The data type for input arguments. Default is str.
+- output_dtype: (Optional) The expected data type for the output. Default is str.
 
-- `name`: The name of the function preset.
-- `operation`: The description of the function's purpose.
-- `input_dtype`: The data type for input arguments.
-- `output_dtype`: The expected data type for the output.
+### update_funk(name, operation=None, input_dtype=None, output_dtype=None)
+Updates the details of a specific function preset.
+- name: The name of the function preset to update.
+- operation: (Optional) The new description of the function's purpose.
+- input_dtype: (Optional) The new data type for input arguments.
+- output_dtype: (Optional) The new expected data type for the output.
+
+### remove_funk(name)
+Removes a predefined function preset.
+- name: The name of the function preset to remove.
+
+### funk_details(name)
+Retrieve the details of a specific function preset.
+- name: The name of the function preset whose details you want to retrieve.
+
+### approx_cost()
+Displays the accumulated token and cost information for the session.
 
 ## Prerequisites
 

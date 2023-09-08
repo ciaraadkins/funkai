@@ -73,6 +73,30 @@ def add_funk(name, operation, input_dtype=str, output_dtype=str):
         "output_dtype": output_dtype
     }
 
+def update_funk(name, operation=None, input_dtype=None, output_dtype=None):
+    """
+    Updates a specific preset in FUNKAI_PRESETS.
+    Args:
+    - name (str): The name of the preset to update.
+    - operation (str, optional): The new operation description.
+    - input_dtype (type, optional): The new expected input data type.
+    - output_dtype (type, optional): The new expected output data type.
+    """
+    preset = FUNKAI_PRESETS.get(name)
+    
+    if not preset:
+        raise ValueError(f"Preset '{name}' not found.")
+    
+    if operation:
+        preset["operation"] = operation
+    if input_dtype:
+        preset["input_dtype"] = input_dtype
+    if output_dtype:
+        preset["output_dtype"] = output_dtype
+    
+    FUNKAI_PRESETS[name] = preset
+
+
 def remove_funk(name):
     """
     Removes a predefined function from the FUNKAI_PRESETS.
@@ -87,6 +111,13 @@ def remove_funk(name):
         raise ValueError(f"Preset '{name}' not found. Cannot remove.")
     
     del FUNKAI_PRESETS[name]
+
+def show_funks():
+    """
+    Returns all the predefined functions in FUNKAI_PRESETS.
+    """
+    return FUNKAI_PRESETS
+
 
 # https://openai.com/pricing
 # https://platform.openai.com/docs/models

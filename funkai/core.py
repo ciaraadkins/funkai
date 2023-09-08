@@ -2,8 +2,38 @@
 
 import openai
 import ast
+import datetime
 
 FUNKAI_PRESETS = {}  # Empty dictionary to hold predefined functions
+
+# Cost tracking dictionary
+cost_information = {
+    "runs": [],
+    "total_tokens": 0,
+    "approx_total_cost": 0.0  # Placeholder
+}
+
+# https://openai.com/pricing
+# https://platform.openai.com/docs/models
+def approxCost(response):
+  model = response['model']
+  prompt_tokens = response['usage']['prompt_tokens']
+  completion_tokens = response['usage']['completion_tokens']
+  if model.startswith("gpt-3.5-turbo"):
+    cost_in= 0.0015/1000 # dollars per token
+    cost_out= 0.002/1000 # dollars per token
+    tot_tokens = prompt_tokens + completion_tokens
+    tot_cost = (cost_in*prompt_tokens) + (cost_out*completion_tokens)
+    return tot_cost,tot_tokens
+  elif model.startswith("text-davinci"):
+    cost_tot = 0.02/1000 # dollars per token
+    tot_tokens = prompt_tokens + completion_tokens
+    return cost_tot*tot_tokens,tot_tokens
+  # elif model is langchain:
+  #   use langchain pricing model
+  else:
+    print("Not 'gpt-3.5' or 'davinci' model")
+    return
 
 def funkai_main(sys_cont,input):
     """
@@ -27,7 +57,8 @@ def funkai_main(sys_cont,input):
 
     return gpt_response
 
-def funktion(input, funk):
+def funktion(input, funk, print_cost=False):
+
     """
     Uses a predefined operation to get a response based on input.
     """
@@ -51,8 +82,28 @@ def funktion(input, funk):
 
     # prompt = f"Given the inputs {args} and {kwargs}, what should the output of a function be?"
     raw_output = funkai_main(system_content,input)
-
     raw_output_str = clean_gpt_response(raw_output)
+
+    # get cost info
+    timestamp = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+    cost_per_token,tokens_used = approxCost(raw_output)
+    cost_for_this_run = tokens_used * cost_per_token
+
+    cost_information["runs"].append({
+        "timestamp": timestamp,
+        "funk_name": funk,
+        "tokens_used": tokens_used,
+        "approx_cost": cost_for_this_run
+    })
+    
+    # Update the total tokens and approximate cost
+    cost_information["total_tokens"] += tokens_used
+    cost_information["approx_total_cost"] += cost_for_this_run
+    
+    if print_cost:
+        print(f"Tokens used for this call: {tokens_used}")
+        print(f"Total tokens used this session: {cost_information['total_tokens']}")
+        print(f"Approximate cost for this session: ${cost_information['approx_cost']:.2f}")
     
     # Convert the output to the desired data type
     try:
@@ -131,9 +182,6 @@ def funk_details(name=None):
     # If name is not provided, return all presets
     return FUNKAI_PRESETS
 
-# https://openai.com/pricing
-# https://platform.openai.com/docs/models
-
 def clean_gpt_response(response):
   model = response['model']
   if model.startswith("gpt-3.5-turbo"):
@@ -202,3 +250,10 @@ def convert_output(output_str, target_dtype):
         return target_dtype(output_str)
     except ValueError:
         raise ValueError(f"Cannot convert '{output_str}' to {target_dtype}")
+
+def approx_cost():
+    """Prints the accumulated cost information for the session."""
+    for run in cost_information["runs"]:
+        print(run)
+    print(f"Total tokens used this session: {cost_information['total_tokens']}")
+    print(f"Approximate cost for this session: ${cost_information['approx_total_cost']:.2f}")

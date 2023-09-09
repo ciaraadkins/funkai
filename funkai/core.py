@@ -85,8 +85,7 @@ def funktion(input, funk, print_cost=False):
 
     # get cost info
     timestamp = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-    cost_per_token,tokens_used = approxCost(raw_output)
-    cost_for_this_run = tokens_used * cost_per_token
+    cost_for_this_run,tokens_used = approxCost(raw_output)
 
     cost_information["runs"].append({
         "timestamp": timestamp,

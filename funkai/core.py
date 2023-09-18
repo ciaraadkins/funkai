@@ -3,6 +3,19 @@ import openai
 import ast
 import datetime
 
+class setup:
+    @classmethod
+    def set_api_key(cls, key, use_env_var=False):
+        if use_env_var:
+            os.environ['OPENAI_API_KEY'] = key
+        else:
+            openai.api_key = key
+
+    @classmethod
+    def check_api_key(cls):
+        if not openai.api_key and 'OPENAI_API_KEY' not in os.environ:
+            raise ValueError("OpenAI API Key not set. Use Funkai.set_api_key() to set it.")
+
 FUNKAI_PRESETS = {}  # Empty dictionary to hold predefined functions
 
 # Cost tracking dictionary

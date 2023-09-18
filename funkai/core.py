@@ -2,8 +2,9 @@
 import openai
 import ast
 import datetime
+import os
 
-class setup:
+class Setup:
     @classmethod
     def set_api_key(cls, key, use_env_var=False):
         if use_env_var:

@@ -224,7 +224,7 @@ class FunkManager:
         del self.funks[name]
 
     def run(self, name, input, print_cost=False):
-        funk = self.get_funk(name)
+        funk = self.get(name)
         if not funk:
             raise ValueError(f"No Funk with name '{name}' found.")
         return funk.run(input, print_cost)

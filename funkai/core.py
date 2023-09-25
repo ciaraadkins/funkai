@@ -4,7 +4,6 @@ import openai
 import ast
 import datetime
 import os
-from data import 
 
 # Funk Class Definition
 class Funk:

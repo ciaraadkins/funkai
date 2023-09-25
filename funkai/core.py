@@ -79,7 +79,8 @@ class Funk:
         gpt_response = openai.Completion.create(
             model="gpt-3.5-turbo-instruct",
             prompt=prompt,
-            temperature=0
+            temperature=0,
+            max_tokens=4096
             )
 
         return gpt_response
@@ -257,11 +258,8 @@ class FunkManager:
     def list_all(self):
         return list(self.funks.keys())
 
-    def cost(self):
-        # funk = self.get(name)  # Assuming you've implemented a 'get' method as shown before
-        # if not funk:
-        #     raise ValueError(f"No Funk with name '{name}' found.")
-        return funk.get_cost()
+    # def cost(self):
+    #     return self.get_cost()
 
 ####################################
 # ******** USAGE EXAMPLES ********

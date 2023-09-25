@@ -115,7 +115,7 @@ class Funk:
         prompt = f"""Instruct: You will receive a Python {self.input_dtype} and a purpose. Provide a {self.output_dtype} result that can be interpreted as a valid Python literal. If unsure, return 'None'.
             Input: {input}
             Purpose: {self.operation}
-            Output: """"
+            Output: """
 
 
         raw_output = self._funkai_main(prompt)

@@ -63,6 +63,28 @@ class Funk:
 
         return gpt_response
 
+    def _funkai_main(self, sys_cont, input):
+        """
+        Generates a function response based on the provided prompt.
+
+        Args:
+        - prompt (str): The prompt for the function.
+
+        Returns:
+        - str: The response from the OpenAI model.
+        """
+        # response = openai.Completion.create(engine="text-davinci-003", prompt=prompt, max_tokens=100)
+
+        gpt_response = openai.ChatCompletion.create(
+        model="gpt-3.5-turbo",
+        temperature=0,
+        messages=[
+            {"role": "system", "content": sys_cont},
+            {"role": "user", "content": f"Given the input is '{input}' what should the output of a function be?"}
+            ])
+
+        return gpt_response
+
     def run(self, input, print_cost=False):
         """
         Uses a predefined operation to get a response based on input.
@@ -77,12 +99,12 @@ class Funk:
         Note: Your output must only be the expected response from the python function with no explanation. If you cannot determine what to output, return 'None'.
         """
 
-        raw_output = funkai_main(system_content, input)
-        raw_output_str = clean_gpt_response(raw_output)
+        raw_output = _funkai_main(system_content, input)
+        raw_output_str = _clean_gpt_response(raw_output)
 
         # get cost info
         timestamp = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-        cost_for_this_run, tokens_used = approxCost(raw_output)
+        cost_for_this_run, tokens_used = _approx_cost(raw_output)
 
         self.cost_information["runs"].append({
             "timestamp": timestamp,
@@ -102,7 +124,7 @@ class Funk:
 
         # Convert the output to the desired data type
         try:
-            return convert_output(raw_output_str, self.output_dtype)
+            return _convert_output(raw_output_str, self.output_dtype)
         except ValueError:
             raise TypeError(f"Failed to convert output to {self.output_dtype}. Raw output: {raw_output_str}")
 
@@ -187,27 +209,27 @@ class FunkManager:
     def __init__(self):
         self.funks = {}  # Store the Funk instances by name
 
-    def add_funk(self, name, operation, input_dtype=str, output_dtype=str):
+    def add(self, name, operation, input_dtype=str, output_dtype=str):
         if name in self.funks:
             raise ValueError(f"A Funk with name '{name}' already exists.")
         new_funk = Funk(name, operation, input_dtype, output_dtype)
         self.funks[name] = new_funk
 
-    def get_funk(self, name):
+    def get(self, name):
         return self.funks.get(name, None)
 
-    def remove_funk(self, name):
+    def remove(self, name):
         if name not in self.funks:
             raise ValueError(f"No Funk with name '{name}' found.")
         del self.funks[name]
 
-    def run_funk(self, name, input, print_cost=False):
+    def run(self, name, input, print_cost=False):
         funk = self.get_funk(name)
         if not funk:
             raise ValueError(f"No Funk with name '{name}' found.")
         return funk.run(input, print_cost)
 
-    def list_all_funks(self):
+    def list_all(self):
         return list(self.funks.keys())
 
 ####################################

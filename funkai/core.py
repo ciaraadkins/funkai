@@ -24,10 +24,8 @@ class Funk:
         
     @staticmethod
     def set_api_key(key):
-        if use_env_var:
-            os.environ['OPENAI_API_KEY'] = key
-        else:
-            openai.api_key = key
+        os.environ['OPENAI_API_KEY'] = key
+        openai.api_key = key
 
     @staticmethod
     def check_api_key():
@@ -99,12 +97,12 @@ class Funk:
         Note: Your output must only be the expected response from the python function with no explanation. If you cannot determine what to output, return 'None'.
         """
 
-        raw_output = _funkai_main(system_content, input)
-        raw_output_str = _clean_gpt_response(raw_output)
+        raw_output = self._funkai_main(system_content, input)
+        raw_output_str = Funk._clean_gpt_response(raw_output)
 
         # get cost info
         timestamp = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-        cost_for_this_run, tokens_used = _approx_cost(raw_output)
+        cost_for_this_run, tokens_used = Funk._approx_cost(raw_output)
 
         self.cost_information["runs"].append({
             "timestamp": timestamp,
@@ -119,12 +117,12 @@ class Funk:
 
         if print_cost:
             print(f"Tokens used for this call: {tokens_used}")
-            print(f"Total tokens used this session: {cost_information['total_tokens']}")
-            print(f"Approximate cost for this session: ${cost_information['approx_total_cost']:.2f}")
+            print(f"Total tokens used this session: {self.cost_information['total_tokens']}")
+            print(f"Approximate cost for this session: ${self.cost_information['approx_total_cost']:.2f}")
 
         # Convert the output to the desired data type
         try:
-            return _convert_output(raw_output_str, self.output_dtype)
+            return Funk._convert_output(raw_output_str, self.output_dtype)
         except ValueError:
             raise TypeError(f"Failed to convert output to {self.output_dtype}. Raw output: {raw_output_str}")
 
@@ -199,9 +197,9 @@ class Funk:
         except ValueError:
             raise ValueError(f"Cannot convert '{output_str}' to {target_dtype}")
 
-    def print_approx_cost(self):
-        """Prints the accumulated cost information for the session."""
-        # ... (Content remains the same, but maybe store cost info at the instance level too)
+    # def print_approx_cost(self):
+    #     """Prints the accumulated cost information for the session."""
+    #     # ... (Content remains the same, but maybe store cost info at the instance level too)
 
 # FunkManager Class Definition
 class FunkManager:

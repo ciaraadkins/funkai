@@ -61,6 +61,9 @@ class Funk:
 
         return gpt_response
 
+    def get_cost(self):
+        return self.cost_information
+
     def _funkai_main(self, prompt):
         """
         Generates a function response based on the provided prompt.
@@ -253,6 +256,12 @@ class FunkManager:
 
     def list_all(self):
         return list(self.funks.keys())
+
+    def cost(self):
+        # funk = self.get(name)  # Assuming you've implemented a 'get' method as shown before
+        # if not funk:
+        #     raise ValueError(f"No Funk with name '{name}' found.")
+        return funk.get_cost()
 
 ####################################
 # ******** USAGE EXAMPLES ********

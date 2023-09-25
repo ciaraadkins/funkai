@@ -61,7 +61,27 @@ class Funk:
 
         return gpt_response
 
-    def _funkai_main(self, sys_cont, input):
+    def _funkai_main(self, prompt):
+        """
+        Generates a function response based on the provided prompt.
+
+        Args:
+        - prompt (str): The prompt for the function.
+
+        Returns:
+        - str: The response from the OpenAI model.
+        """
+        # response = openai.Completion.create(engine="text-davinci-003", prompt=prompt, max_tokens=100)
+
+        gpt_response = openai.Completion.create(
+            model="gpt-3.5-turbo-instruct",
+            prompt=prompt,
+            temperature=0
+            )
+
+        return gpt_response
+    
+    def _funkai_main_old(self, sys_cont, input):
         """
         Generates a function response based on the provided prompt.
 
@@ -92,14 +112,15 @@ class Funk:
         if not isinstance(input, self.input_dtype):
             raise TypeError(f"Expected input of type {self.input_dtype}, but got {type(input)}")
 
-        system_content = f"""
-        Task Description: Act as a python function whose purpose is to {self.operation}. The function should take an {self.input_dtype} as an input and return an {self.output_dtype} as an output.
-        Note: Your output must only be the expected response from the python function with no explanation. If you cannot determine what to output, return 'None'.
-        """
+        prompt = f"""Instruct: You will receive a Python {self.input_dtype} and a purpose. Provide a {self.output_dtype} result that can be interpreted as a valid Python literal. If unsure, return 'None'.
+            Input: {input}
+            Purpose: {self.operation}
+            Output: """"
 
-        raw_output = self._funkai_main(system_content, input)
+
+        raw_output = self._funkai_main(prompt)
         raw_output_str = Funk._clean_gpt_response(raw_output)
-
+        
         # get cost info
         timestamp = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
         cost_for_this_run, tokens_used = Funk._approx_cost(raw_output)
@@ -129,7 +150,10 @@ class Funk:
     @staticmethod
     def _clean_gpt_response(response):
         model = response['model']
-        if model.startswith("gpt-3.5-turbo"):
+        if model == "gpt-3.5-turbo-instruct":
+            text = response['choices'][0]['text']
+            return text
+        elif model.startswith("gpt-3.5-turbo"):
             text = response['choices'][0]['message']['content']
             return text
         elif model.startswith("text-davinci"):

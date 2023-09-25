@@ -121,7 +121,7 @@ class Funk:
 
     @staticmethod
     def _convert_output(output_str, target_dtype):
-         """
+        """
         Convert the raw output string to the desired data type.
         Handle special cases for common data types.
         """

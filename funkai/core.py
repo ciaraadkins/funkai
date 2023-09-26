@@ -64,7 +64,7 @@ class Funk:
     def get_cost(self):
         return self.cost_information
 
-    def _funkai_main(self, prompt):
+    def _funkai_main_exp(self, prompt):
         """
         Generates a function response based on the provided prompt.
 
@@ -85,7 +85,7 @@ class Funk:
 
         return gpt_response
     
-    def _funkai_main_old(self, sys_cont, input):
+    def _funkai_main(self, sys_cont, input):
         """
         Generates a function response based on the provided prompt.
 
@@ -98,11 +98,11 @@ class Funk:
         # response = openai.Completion.create(engine="text-davinci-003", prompt=prompt, max_tokens=100)
 
         gpt_response = openai.ChatCompletion.create(
-        model="gpt-3.5-turbo",
+        model="gpt-3.5-turbo-16k",
         temperature=0,
         messages=[
             {"role": "system", "content": sys_cont},
-            {"role": "user", "content": f"Given the input is '{input}' what should the output of a function be?"}
+            {"role": "user", "content": input}
             ])
 
         return gpt_response
@@ -116,14 +116,21 @@ class Funk:
         if not isinstance(input, self.input_dtype):
             raise TypeError(f"Expected input of type {self.input_dtype}, but got {type(input)}")
 
-        prompt = f"""Instruct: You will receive a Python {self.input_dtype} and a purpose. Provide a {self.output_dtype} result that can be interpreted as a valid Python literal. If unsure, return 'None'.
-            Input: {input}
-            Purpose: {self.operation}
-            Output: """
 
+        system_content = """Task Description: Act as a computer program. You will be given an input, an operation to perform on the input, and the desired python data type for the output. 
+        Note: Your response must only be your output with no explanation. The result will be interpreted as a Python literal. If unsure, return 'None'
+        """
 
-        raw_output = self._funkai_main(prompt)
+        formatted_input = f"""Purpose: {self.operation}
+        Input: {input}
+        Output data type: {self.output_dtype}
+        """
+
+        raw_output = self.funkai_main(system_content,formatted_input)
         raw_output_str = Funk._clean_gpt_response(raw_output)
+
+        # raw_output = self._funkai_main(prompt)
+        # raw_output_str = Funk._clean_gpt_response(raw_output)
         
         # get cost info
         timestamp = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')

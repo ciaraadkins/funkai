@@ -98,12 +98,13 @@ class Funk:
         # response = openai.Completion.create(engine="text-davinci-003", prompt=prompt, max_tokens=100)
 
         gpt_response = openai.ChatCompletion.create(
-        model="gpt-3.5-turbo-16k",
-        temperature=0,
-        messages=[
-            {"role": "system", "content": sys_cont},
-            {"role": "user", "content": input}
-            ])
+            model="gpt-3.5-turbo-16k",
+            messages=[
+                {"role": "system", "content": sys_cont},
+                {"role": "user", "content": input}
+                ],
+            temperature=0,
+            max_tokens=16000)
 
         return gpt_response
 

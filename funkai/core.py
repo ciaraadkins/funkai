@@ -127,7 +127,7 @@ class Funk:
         Output data type: {self.output_dtype}
         """
 
-        raw_output = self.funkai_main(system_content,formatted_input)
+        raw_output = self._funkai_main(system_content,formatted_input)
         raw_output_str = Funk._clean_gpt_response(raw_output)
 
         # raw_output = self._funkai_main(prompt)

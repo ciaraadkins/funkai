@@ -149,9 +149,16 @@ class Funk:
         self.cost_information["approx_total_cost"] += cost_for_this_run
 
         if print_cost:
+            # Print information about the current run
+            print("\n--- Current Run Information ---")
             print(f"Tokens used for this call: {tokens_used}")
+            print(f"Approximate cost for this call: ${cost_for_this_run:.2f}")
+            
+            # Print cumulative totals for the session
+            print("\n--- Session Totals ---")
             print(f"Total tokens used this session: {self.cost_information['total_tokens']}")
-            print(f"Approximate cost for this session: ${self.cost_information['approx_total_cost']:.2f}")
+            print(f"Approximate total cost for this session: ${self.cost_information['approx_total_cost']:.2f}")
+            print("-----------------------------\n")  # To separate the output
 
         # Convert the output to the desired data type
         try:

@@ -120,7 +120,7 @@ class Funk:
 
 
         system_content = """Task Description: Act as a python program. Based on the operation provided, process the input and produce an output. 
-        Note: Ensure the output matches the specified Python data type because the result will be interpreted as a Python literal. The output must only be the response with no explanation.
+        Note: Ensure the output matches the specified Python data type because the result will be interpreted as a Python literal. The output must only be the response with no explanation. If unsure, return 'None'.
         """
 
         formatted_input = f"Operation: {self.operation}\nInput: {input}\nOutput data type: {self.output_dtype}"

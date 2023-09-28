@@ -99,6 +99,7 @@ class Funk:
 
         gpt_response = openai.ChatCompletion.create(
             model="gpt-3.5-turbo-16k",
+            # model="gpt-4-32k",
             messages=[
                 {"role": "system", "content": sys_cont},
                 {"role": "user", "content": input}
@@ -118,14 +119,11 @@ class Funk:
             raise TypeError(f"Expected input of type {self.input_dtype}, but got {type(input)}")
 
 
-        system_content = """Task Description: Act as a computer program. You will be given an input, an operation to perform on the input, and the desired python data type for the output. 
-        Note: Your response must only be your output with no explanation. The result will be interpreted as a Python literal. If unsure, return 'None'
+        system_content = """Task Description: Act as a python program. Based on the operation provided, process the input and produce an output. 
+        Note: Ensure the output matches the specified Python data type because the result will be interpreted as a Python literal. The output must only be the response with no explanation.
         """
 
-        formatted_input = f"""Purpose: {self.operation}
-        Input: {input}
-        Output data type: {self.output_dtype}
-        """
+        formatted_input = f"Operation: {self.operation}\nInput: {input}\nOutput data type: {self.output_dtype}"
 
         raw_output = self._funkai_main(system_content,formatted_input)
         raw_output_str = Funk._clean_gpt_response(raw_output)
@@ -158,7 +156,7 @@ class Funk:
             print("\n--- Session Totals ---")
             print(f"Total tokens used this session: {self.cost_information['total_tokens']}")
             print(f"Approximate total cost for this session: ${self.cost_information['approx_total_cost']:.2f}")
-            print("-----------------------------\n")  # To separate the output
+            print("-----------------------------\n") # To separate the output
 
         # Convert the output to the desired data type
         try:

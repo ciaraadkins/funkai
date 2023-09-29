@@ -4,7 +4,7 @@ import openai
 import ast
 import datetime
 import os
-from .examples import examples
+from .examples import all_prompts
 
 # Funk Class Definition
 class Funk:
@@ -86,7 +86,7 @@ class Funk:
 
     #     return gpt_response
     
-    def _get_relevant_examples(self, examples):
+    def _get_relevant_examples(self, ex):
         """
         Fetches the relevant examples from the examples dictionary based on input_dtype and output_dtype.
 
@@ -96,16 +96,19 @@ class Funk:
         Returns:
         - list: A list of relevant examples based on input and output data types.
         """
+        # Generate the keys based on the input and output data types
+        input_key = "in_" + str(self.input_dtype)
+        output_key = "out_" + str(self.output_dtype)
+        
         try:
-            # dtype_examples = examples[self.input_dtype]
-            # relevant_examples = dtype_examples[self.output_dtype]
-            return examples["in_"+str(self.input_dtype)]["out_"+str(self.output_dtype)]
+            # Fetch the examples using the generated keys
+            relevant_examples = ex[input_key][output_key]
+            return relevant_examples
         except KeyError:
             # No examples found for the given data types
             return []
 
-
-    def _funkai_main(self, sys_cont, examples,input):
+    def _funkai_main(self, sys_cont, ex,input):
         """
         Generates a function response based on the provided prompt.
 
@@ -122,10 +125,10 @@ class Funk:
             # model="gpt-4-32k",
             messages=[
                 {"role": "system", "content": sys_cont},
-                {"role": "user", "content": examples['example1']['prompt']},
-                {"role": "assistant", "content": str(examples['example1']['response'])},
-                {"role": "user", "content": examples['example2']['prompt']},
-                {"role": "assistant", "content": str(examples['example2']['response'])},
+                {"role": "user", "content": ex['example1']['prompt']},
+                {"role": "assistant", "content": str(ex['example1']['response'])},
+                {"role": "user", "content": ex['example2']['prompt']},
+                {"role": "assistant", "content": str(ex['example2']['response'])},
                 {"role": "user", "content": input}
                 ],
             temperature=0,
@@ -152,7 +155,7 @@ class Funk:
         """
 
         formatted_input = f"Operation: {self.operation}\nInput: {input}\nOutput data type: {self.output_dtype}"
-        the_examples = self._get_relevant_examples(examples)
+        the_examples = self._get_relevant_examples(all_prompts)
         raw_output = self._funkai_main(system_content,the_examples,formatted_input)
         raw_output_str = Funk._clean_gpt_response(raw_output)
 

@@ -97,9 +97,9 @@ class Funk:
         - list: A list of relevant examples based on input and output data types.
         """
         try:
-            dtype_examples = examples[self.input_dtype]
-            relevant_examples = dtype_examples[self.output_dtype]
-            return relevant_examples
+            # dtype_examples = examples[self.input_dtype]
+            # relevant_examples = dtype_examples[self.output_dtype]
+            return examples["in_"+str(self.input_dtype)]["out_"+str(self.output_dtype)]
         except KeyError:
             # No examples found for the given data types
             return []

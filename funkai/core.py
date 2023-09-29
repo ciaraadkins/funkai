@@ -4,6 +4,7 @@ import openai
 import ast
 import datetime
 import os
+from examples import examples
 
 # Funk Class Definition
 class Funk:
@@ -64,28 +65,47 @@ class Funk:
     def get_cost(self):
         return self.cost_information
 
-    def _funkai_main_exp(self, prompt):
+    # def _funkai_main_exp(self, prompt):
+    #     """
+    #     Generates a function response based on the provided prompt.
+
+    #     Args:
+    #     - prompt (str): The prompt for the function.
+
+    #     Returns:
+    #     - str: The response from the OpenAI model.
+    #     """
+    #     # response = openai.Completion.create(engine="text-davinci-003", prompt=prompt, max_tokens=100)
+
+    #     gpt_response = openai.Completion.create(
+    #         model="gpt-3.5-turbo-instruct",
+    #         prompt=prompt,
+    #         temperature=0,
+    #         max_tokens=4096
+    #         )
+
+    #     return gpt_response
+    
+    def _get_relevant_examples(self, examples):
         """
-        Generates a function response based on the provided prompt.
+        Fetches the relevant examples from the examples dictionary based on input_dtype and output_dtype.
 
         Args:
-        - prompt (str): The prompt for the function.
+        - examples (dict): The dictionary containing all examples.
 
         Returns:
-        - str: The response from the OpenAI model.
+        - list: A list of relevant examples based on input and output data types.
         """
-        # response = openai.Completion.create(engine="text-davinci-003", prompt=prompt, max_tokens=100)
+        try:
+            dtype_examples = examples[self.input_dtype]
+            relevant_examples = dtype_examples[self.output_dtype]
+            return relevant_examples
+        except KeyError:
+            # No examples found for the given data types
+            return []
 
-        gpt_response = openai.Completion.create(
-            model="gpt-3.5-turbo-instruct",
-            prompt=prompt,
-            temperature=0,
-            max_tokens=4096
-            )
 
-        return gpt_response
-    
-    def _funkai_main(self, sys_cont, input):
+    def _funkai_main(self, sys_cont, examples,input):
         """
         Generates a function response based on the provided prompt.
 
@@ -102,6 +122,10 @@ class Funk:
             # model="gpt-4-32k",
             messages=[
                 {"role": "system", "content": sys_cont},
+                {"role": "user", "content": examples['example1']['prompt']},
+                {"role": "assistant", "content": str(examples['example1']['response'])},
+                {"role": "user", "content": examples['example2']['prompt']},
+                {"role": "assistant", "content": str(examples['example2']['response'])},
                 {"role": "user", "content": input}
                 ],
             temperature=0,
@@ -114,6 +138,10 @@ class Funk:
         Uses a predefined operation to get a response based on input.
         """
 
+        # Check valid input data types
+        if not isinstance(input, (dict, list, str)):
+            raise TypeError(f"Invalid input type {type(input)}. Expected one of [dict, list, str].")
+
         # Check input data types
         if not isinstance(input, self.input_dtype):
             raise TypeError(f"Expected input of type {self.input_dtype}, but got {type(input)}")
@@ -124,8 +152,8 @@ class Funk:
         """
 
         formatted_input = f"Operation: {self.operation}\nInput: {input}\nOutput data type: {self.output_dtype}"
-
-        raw_output = self._funkai_main(system_content,formatted_input)
+        the_examples = self._get_relevant_examples(examples)
+        raw_output = self._funkai_main(system_content,the_examples,formatted_input)
         raw_output_str = Funk._clean_gpt_response(raw_output)
 
         # raw_output = self._funkai_main(prompt)

@@ -106,7 +106,7 @@ class Funk:
         try:
             # Fetch the examples using the generated keys
             relevant_examples = ex[input_key][output_key]
-            print{"relevant_examples: "+str(relevant_examples)}
+            print("relevant_examples: "+str(relevant_examples))
             return relevant_examples
         except KeyError:
             # No examples found for the given data types

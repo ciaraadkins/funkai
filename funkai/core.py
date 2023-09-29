@@ -100,9 +100,13 @@ class Funk:
         input_key = "in_" + str(self.input_dtype)
         output_key = "out_" + str(self.output_dtype)
         
+        print("input_key: "+input_key)
+        print("output_key: "+output_key)
+
         try:
             # Fetch the examples using the generated keys
             relevant_examples = ex[input_key][output_key]
+            print{"relevant_examples: "+str(relevant_examples)}
             return relevant_examples
         except KeyError:
             # No examples found for the given data types
@@ -119,6 +123,8 @@ class Funk:
         - str: The response from the OpenAI model.
         """
         # response = openai.Completion.create(engine="text-davinci-003", prompt=prompt, max_tokens=100)
+
+        print("examples in _funkai_main: ",+ex)
 
         gpt_response = openai.ChatCompletion.create(
             model="gpt-3.5-turbo-16k",
@@ -156,6 +162,7 @@ class Funk:
 
         formatted_input = f"Operation: {self.operation}\nInput: {input}\nOutput data type: {self.output_dtype}"
         the_examples = self._get_relevant_examples(all_prompts)
+        print("the_examples: "+str(the_examples))
         raw_output = self._funkai_main(system_content,the_examples,formatted_input)
         raw_output_str = Funk._clean_gpt_response(raw_output)
 

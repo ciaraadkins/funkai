@@ -97,8 +97,8 @@ class Funk:
         - list: A list of relevant examples based on input and output data types.
         """
         # Generate the keys based on the input and output data types
-        input_key = "in_" + str(self.input_dtype)
-        output_key = "out_" + str(self.output_dtype)
+        input_key = "in_" + self.input_dtype.__name__
+        output_key = "out_" + self.output_dtype.__name__
         
         print("input_key: "+input_key)
         print("output_key: "+output_key)

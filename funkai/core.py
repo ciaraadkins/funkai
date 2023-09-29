@@ -124,7 +124,7 @@ class Funk:
         """
         # response = openai.Completion.create(engine="text-davinci-003", prompt=prompt, max_tokens=100)
 
-        print("examples in _funkai_main: ",+str(ex))
+        print("examples in _funkai_main: "+str(ex))
 
         gpt_response = openai.ChatCompletion.create(
             model="gpt-3.5-turbo-16k",

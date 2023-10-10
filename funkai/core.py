@@ -41,7 +41,6 @@ class Funk:
             )
         elif 'LLMONITOR_APP_ID' in os.environ:
             monitor(openai)
-            print("Since you have the environment variable 'LLMONITOR_APP_ID' set, your data is being sent to llmonitor.")
 
     @staticmethod
     def _approx_cost(response):

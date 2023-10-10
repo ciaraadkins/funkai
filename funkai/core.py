@@ -42,7 +42,7 @@ class Funk:
             try:
                 from llmonitor import monitor
                 monitor(openai)
-            except
+            except:
                 print("Looks like you have your 'LLMONITOR_APP_ID' variable set but didn't install llmonitor. Install llmonitor and rerun.")
 
 

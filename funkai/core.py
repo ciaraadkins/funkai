@@ -5,7 +5,6 @@ import ast
 import datetime
 import os
 from .examples import all_prompts
-from llmonitor import monitor
 
 # Funk Class Definition
 class Funk:
@@ -40,7 +39,12 @@ class Funk:
                 "If you've already done this and still encounter this error, please ensure your API key is correct."
             )
         elif 'LLMONITOR_APP_ID' in os.environ:
-            monitor(openai)
+            try:
+                from llmonitor import monitor
+                monitor(openai)
+            except
+                print("Looks like you have your 'LLMONITOR_APP_ID' variable set but didn't install llmonitor. Install llmonitor and rerun.")
+
 
     # @staticmethod
     # def _approx_cost(response):

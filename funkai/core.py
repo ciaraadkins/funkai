@@ -5,6 +5,7 @@ import ast
 import datetime
 import os
 from .examples import all_prompts
+from llmonitor import monitor
 
 # Funk Class Definition
 class Funk:
@@ -38,6 +39,9 @@ class Funk:
                 "3. If you have trouble with the above methods, use Funkai.set_api_key('YOUR_API_KEY'). \n"
                 "If you've already done this and still encounter this error, please ensure your API key is correct."
             )
+        elif 'LLMONITOR_APP_ID' in os.environ:
+            monitor(openai)
+            print("Since you have the environment variable 'LLMONITOR_APP_ID' set, your data is being sent to llmonitor.")
 
     @staticmethod
     def _approx_cost(response):
@@ -64,27 +68,6 @@ class Funk:
 
     def get_cost(self):
         return self.cost_information
-
-    # def _funkai_main_exp(self, prompt):
-    #     """
-    #     Generates a function response based on the provided prompt.
-
-    #     Args:
-    #     - prompt (str): The prompt for the function.
-
-    #     Returns:
-    #     - str: The response from the OpenAI model.
-    #     """
-    #     # response = openai.Completion.create(engine="text-davinci-003", prompt=prompt, max_tokens=100)
-
-    #     gpt_response = openai.Completion.create(
-    #         model="gpt-3.5-turbo-instruct",
-    #         prompt=prompt,
-    #         temperature=0,
-    #         max_tokens=4096
-    #         )
-
-    #     return gpt_response
     
     def _get_relevant_examples(self, ex):
         """

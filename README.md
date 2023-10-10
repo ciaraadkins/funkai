@@ -4,7 +4,6 @@ Easily create and use placeholder functions powered by the OpenAI API. Ideal for
 
 ## Installation
 
-```bash
 pip install funkai
 
 ## Quickstart

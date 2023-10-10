@@ -277,8 +277,8 @@ class FunkManager:
         new_funk = Funk(name, operation, input_dtype, output_dtype)
         self.funks[name] = new_funk
 
-    # def get(self, name):
-    #     return self.funks.get(name, None)
+    def _get(self, name):
+        return self.funks.get(name, None)
 
     def remove(self, name):
         if name not in self.funks:
@@ -286,12 +286,12 @@ class FunkManager:
         del self.funks[name]
 
     def run(self, name, input, print_cost=False):
-        funk = self.get(name)
+        funk = self._get(name)
         if not funk:
             raise ValueError(f"No Funk with name '{name}' found.")
         return funk.run(input, print_cost)
 
-    def list_all(self):
+    def show(self):
         return list(self.funks.keys())
 
     # def cost(self):

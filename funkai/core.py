@@ -17,12 +17,12 @@ class Funk:
         self.output_dtype = output_dtype
         self.check_api_key()
 
-        # Cost tracking for this specific Funk instance
-        self.cost_information = {
-            "runs": [],
-            "total_tokens": 0,
-            "approx_total_cost": 0.0  # Placeholder
-        }
+        # # Cost tracking for this specific Funk instance
+        # self.cost_information = {
+        #     "runs": [],
+        #     "total_tokens": 0,
+        #     "approx_total_cost": 0.0  # Placeholder
+        # }
         
     @staticmethod
     def set_api_key(key):
@@ -42,31 +42,31 @@ class Funk:
         elif 'LLMONITOR_APP_ID' in os.environ:
             monitor(openai)
 
-    @staticmethod
-    def _approx_cost(response):
-        model = response['model']
-        prompt_tokens = response['usage']['prompt_tokens']
-        completion_tokens = response['usage']['completion_tokens']
-        if model.startswith("gpt-3.5-turbo"):
-            cost_in= 0.0015/1000 # dollars per token
-            cost_out= 0.002/1000 # dollars per token
-            tot_tokens = prompt_tokens + completion_tokens
-            tot_cost = (cost_in*prompt_tokens) + (cost_out*completion_tokens)
-            return tot_cost,tot_tokens
-        elif model.startswith("text-davinci"):
-            cost_tot = 0.02/1000 # dollars per token
-            tot_tokens = prompt_tokens + completion_tokens
-            return cost_tot*tot_tokens,tot_tokens
-        # elif model is langchain:
-        #   use langchain pricing model
-        else:
-            print("Not 'gpt-3.5' or 'davinci' model")
-            return
+    # @staticmethod
+    # def _approx_cost(response):
+    #     model = response['model']
+    #     prompt_tokens = response['usage']['prompt_tokens']
+    #     completion_tokens = response['usage']['completion_tokens']
+    #     if model.startswith("gpt-3.5-turbo"):
+    #         cost_in= 0.0015/1000 # dollars per token
+    #         cost_out= 0.002/1000 # dollars per token
+    #         tot_tokens = prompt_tokens + completion_tokens
+    #         tot_cost = (cost_in*prompt_tokens) + (cost_out*completion_tokens)
+    #         return tot_cost,tot_tokens
+    #     elif model.startswith("text-davinci"):
+    #         cost_tot = 0.02/1000 # dollars per token
+    #         tot_tokens = prompt_tokens + completion_tokens
+    #         return cost_tot*tot_tokens,tot_tokens
+    #     # elif model is langchain:
+    #     #   use langchain pricing model
+    #     else:
+    #         print("Not 'gpt-3.5' or 'davinci' model")
+    #         return
 
-        return gpt_response
+    #     return gpt_response
 
-    def get_cost(self):
-        return self.cost_information
+    # def get_cost(self):
+    #     return self.cost_information
     
     def _get_relevant_examples(self, ex):
         """
@@ -110,7 +110,6 @@ class Funk:
 
         gpt_response = openai.ChatCompletion.create(
             model="gpt-3.5-turbo-16k",
-            # model="gpt-4-32k",
             messages=[
                 {"role": "system", "content": sys_cont},
                 {"role": "user", "content": ex['example1']['prompt']},
@@ -153,30 +152,30 @@ class Funk:
         
         # get cost info
         timestamp = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-        cost_for_this_run, tokens_used = Funk._approx_cost(raw_output)
+        # cost_for_this_run, tokens_used = Funk._approx_cost(raw_output)
 
-        self.cost_information["runs"].append({
-            "timestamp": timestamp,
-            "funk_name": self.name,
-            "tokens_used": tokens_used,
-            "approx_cost": cost_for_this_run
-        })
+        # self.cost_information["runs"].append({
+        #     "timestamp": timestamp,
+        #     "funk_name": self.name,
+        #     "tokens_used": tokens_used,
+        #     "approx_cost": cost_for_this_run
+        # })
 
-        # Update the total tokens and approximate cost
-        self.cost_information["total_tokens"] += tokens_used
-        self.cost_information["approx_total_cost"] += cost_for_this_run
+        # # Update the total tokens and approximate cost
+        # self.cost_information["total_tokens"] += tokens_used
+        # self.cost_information["approx_total_cost"] += cost_for_this_run
 
-        if print_cost:
-            # Print information about the current run
-            print("\n--- Current Run Information ---")
-            print(f"Tokens used for this call: {tokens_used}")
-            print(f"Approximate cost for this call: ${cost_for_this_run:.2f}")
+        # if print_cost:
+        #     # Print information about the current run
+        #     print("\n--- Current Run Information ---")
+        #     print(f"Tokens used for this call: {tokens_used}")
+        #     print(f"Approximate cost for this call: ${cost_for_this_run:.2f}")
             
-            # Print cumulative totals for the session
-            print("\n--- Session Totals ---")
-            print(f"Total tokens used this session: {self.cost_information['total_tokens']}")
-            print(f"Approximate total cost for this session: ${self.cost_information['approx_total_cost']:.2f}")
-            print("-----------------------------\n") # To separate the output
+        #     # Print cumulative totals for the session
+        #     print("\n--- Session Totals ---")
+        #     print(f"Total tokens used this session: {self.cost_information['total_tokens']}")
+        #     print(f"Approximate total cost for this session: ${self.cost_information['approx_total_cost']:.2f}")
+        #     print("-----------------------------\n") # To separate the output
 
         # Convert the output to the desired data type
         try:

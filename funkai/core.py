@@ -116,10 +116,10 @@ class Funk:
             model="gpt-3.5-turbo-16k",
             messages=[
                 {"role": "system", "content": sys_cont},
-                {"role": "user", "content": ex['example1']['prompt']},
-                {"role": "assistant", "content": str(ex['example1']['response'])},
-                {"role": "user", "content": ex['example2']['prompt']},
-                {"role": "assistant", "content": str(ex['example2']['response'])},
+                # {"role": "user", "content": ex['example1']['prompt']},
+                # {"role": "assistant", "content": str(ex['example1']['response'])},
+                # {"role": "user", "content": ex['example2']['prompt']},
+                # {"role": "assistant", "content": str(ex['example2']['response'])},
                 {"role": "user", "content": input}
                 ],
             temperature=0,
@@ -277,8 +277,8 @@ class FunkManager:
         new_funk = Funk(name, operation, input_dtype, output_dtype)
         self.funks[name] = new_funk
 
-    def get(self, name):
-        return self.funks.get(name, None)
+    # def get(self, name):
+    #     return self.funks.get(name, None)
 
     def remove(self, name):
         if name not in self.funks:

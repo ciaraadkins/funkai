@@ -1,78 +1,76 @@
-# Funkai
+# Funkai Library
 
-Easily create and use placeholder functions powered by the OpenAI API. Ideal for prototyping and quickly mocking up functionality.
-
-## Installation
-
-```bash
-pip install funkai
-
-## Quickstart
-
-1. **Define a Pre-set Function**
-
-    Use the `add_funk` function to create a pre-defined operation. 
-
-    ```python
-    from funkai.core import add_funk
-
-    add_funk(
-        name="animal_sound",
-        operation="respond with the sound the given animal makes",
-        input_dtype=str,
-        output_dtype=str
-    )
-    ```
-
-2. **Use the Pre-defined Function**
-
-    After defining a preset, use the `funktion` method to generate a response.
-
-    ```python
-    from funkai.core import funktion
-
-    response = funktion("cat", funk="animal_sound")
-    print(response)  # E.g., "meow"
-    ```
+Funkai is a Python library that encapsulates linguistic operations and uses OpenAI to perform them based on user inputs.
 
 ## Features
+- Diverse Operations: Easily define linguistic tasks that can process various data types.
+- Interaction with OpenAI: Seamlessly connect and utilize the OpenAI API to run operations.
+- Dynamic Management: Add, remove, and run operations on-the-fly with the FunkManager.
 
-- **Simple Interface**: With just two primary functions, 'add_funk' and 'funktion', the library is easy to use and understand.
-- **Data Type Validation**: Ensures inputs and outputs adhere to predefined data types.
-- **Powered by OpenAI**: Leverage the power of GPT-3.5-turbo or any other model from OpenAI's offerings.
+## Funkai Setup
+Install via pip:
+```python
+pip install funkai
+```
 
-## Documentation
+Or clone the repository:
+```python
+git clone https://github.com/ciaraadkins/funkai.git
+pip install ./funkai/
+```
 
-### `funktion(input, funk, print_cost=False)`
-Uses a predefined operation to generate a response based on the input.
-- `input`: The input value for the operation.
-- `funk`: The name of the predefined function to be used.
-- `print_cost`: (Optional) A flag to indicate if the token and cost information should be printed.
+Once installed, import the necessary modules:
+ ```python
+from funkai import Funk,FunkManager
+```
 
-### `add_funk(name, operation, input_dtype=str, output_dtype=str)`
-Define a new preset function.
-- `name`: The name of the function preset.
-- `operation`: The description of the function's purpose.
-- `input_dtype`: (Optional) The data type for input arguments. Default is `str`.
-- `output_dtype`: (Optional) The expected data type for the output. Default is `str`.
+## OpenAI Setup
+For the OpenAI functionality to work, you need to set up your OpenAI API key:
+```python
+import openai
+import os
 
-### `update_funk(name, operation=None, input_dtype=None, output_dtype=None)`
-Updates the details of a specific function preset.
-- `name`: The name of the function preset to update.
-- `operation`: (Optional) The new description of the function's purpose.
-- `input_dtype`: (Optional) The new data type for input arguments.
-- `output_dtype`: (Optional) The new expected data type for the output.
+# Replace with your OpenAI API key
+openai.api_key = 'YOUR_OPENAI_API_KEY'
+```
 
-### `remove_funk(name)`
-Removes a predefined function preset.
-- `name`: The name of the function preset to remove.
+Additionally, if you want to monitor your llm usage we recommend using llmonitor (you will need to also set up an account and get an app id on https://llmonitor.com/:
+```python
+pip install openai llmonitor
+os.environ["LLMONITOR_APP_ID"] = "YOUR_LLMONITOR_APP_ID"
+```
 
-### `funk_details(name)`
-Retrieve the details of a specific function preset.
-- `name`: The name of the function preset whose details you want to retrieve.
+# Quick Start
+## Defining Functions (Funks)
+Add functions as per your requirements:
+```python
+my_funks = FunkManager()
 
-### `approx_cost()`
-Displays the accumulated token and cost information for the session.
+my_funks.add(
+    name="rhyme5",
+    operation="given a word, generate 5 words that rhyme with it.",
+    input_dtype=str,
+    output_dtype=list
+)
+
+fruit_finder = my_funks.add(
+    name="find fruit",
+    operation="given the input list of miscellaneous items, return a list of only the fruit",
+    input_dtype=list,
+    output_dtype=list
+)
+```
+
+## Using Functions (Funks)
+Execute your defined function:
+```python
+my_funks.run("rhyme5", "cat"))
+# should return something like: ['bat', 'hat', 'mat', 'rat', 'sat']
+
+items = ["apple", "bike", "carrot", "date", "elephant", "fig", "grape", "helicopter", "ice cream", "jackfruit", "kite", "lemon", "mango", "notebook","strawberry", "television", "umbrella", "van", "watermelon", "xylophone", "yellow", "zebra"]
+my_funks.run("find fruit",items)
+# should return something like: ['apple','date','fig','grape','jackfruit','lemon','mango','strawberry','watermelon']
+```
 
 ## Prerequisites
 

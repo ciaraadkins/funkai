@@ -83,7 +83,7 @@ class Funk:
 
         return gpt_response
 
-    def run(self, input, full_resp=False):
+    def run(self, input, full_resp):
         """
         Uses a predefined operation to get a response based on input.
         """
@@ -221,11 +221,11 @@ class FunkManager:
             raise ValueError(f"No Funk with name '{name}' found.")
         del self.funks[name]
 
-    def run(self, name, input, print_cost=False):
+    def run(self, name, input, full_resp=False):
         funk = self._get(name)
         if not funk:
             raise ValueError(f"No Funk with name '{name}' found.")
-        return funk.run(input, print_cost)
+        return funk.run(input, full_resp)
 
     def show(self):
         return list(self.funks.keys())

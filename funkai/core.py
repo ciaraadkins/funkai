@@ -83,7 +83,7 @@ class Funk:
 
         return gpt_response
 
-    def run(self, input, print_cost=False):
+    def run(self, input, full_resp=False):
         """
         Uses a predefined operation to get a response based on input.
         """
@@ -113,11 +113,19 @@ class Funk:
         raw_output_str = Funk._clean_gpt_response(raw_output)
         timestamp = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
 
-        # Convert the output to the desired data type
-        try:
-            return Funk._convert_output(raw_output_str, self.output_dtype)
-        except ValueError:
-            raise TypeError(f"Failed to convert output to {self.output_dtype}. Raw output: {raw_output_str}")
+        # if for some reason you want to return the full gpt response
+        if full_resp:
+             # Convert the output to the desired data type
+            try:
+                return Funk._convert_output(raw_output_str, self.output_dtype),raw_output
+            except ValueError:
+                raise TypeError(f"Failed to convert output to {self.output_dtype}. Raw output: {raw_output_str}")
+        else:
+            # Convert the output to the desired data type
+            try:
+                return Funk._convert_output(raw_output_str, self.output_dtype)
+            except ValueError:
+                raise TypeError(f"Failed to convert output to {self.output_dtype}. Raw output: {raw_output_str}")
 
     @staticmethod
     def _clean_gpt_response(response):

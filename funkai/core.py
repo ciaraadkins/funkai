@@ -98,7 +98,7 @@ class Funk:
 
 
         system_content = """Act as a python program. Based on the operation provided, process the input and produce an output. Prioritize precision and correctness in your output.
-        Note: Ensure the output matches the specified Python data type because the result will be interpreted as a Python literal. The output must only be the response with no explanation. If unsure, return 'None'.
+        Note: Ensure the output matches the specified Python data type because the result will be interpreted as a Python literal. The output must only be the response with no explanation. If there is no valid response, return 'None'.
         """
         
         # Check if it's a string

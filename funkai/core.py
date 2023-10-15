@@ -4,7 +4,6 @@ import openai
 import ast
 import datetime
 import os
-from .examples import all_prompts
 
 # Funk Class Definition
 class Funk:
@@ -15,13 +14,6 @@ class Funk:
         self.input_dtype = input_dtype
         self.output_dtype = output_dtype
         self.check_api_key()
-
-        # # Cost tracking for this specific Funk instance
-        # self.cost_information = {
-        #     "runs": [],
-        #     "total_tokens": 0,
-        #     "approx_total_cost": 0.0  # Placeholder
-        # }
         
     @staticmethod
     def set_api_key(key):
@@ -45,33 +37,6 @@ class Funk:
             except:
                 print("Looks like you have your 'LLMONITOR_APP_ID' variable set but didn't install llmonitor. Install llmonitor and rerun.")
 
-
-    # @staticmethod
-    # def _approx_cost(response):
-    #     model = response['model']
-    #     prompt_tokens = response['usage']['prompt_tokens']
-    #     completion_tokens = response['usage']['completion_tokens']
-    #     if model.startswith("gpt-3.5-turbo"):
-    #         cost_in= 0.0015/1000 # dollars per token
-    #         cost_out= 0.002/1000 # dollars per token
-    #         tot_tokens = prompt_tokens + completion_tokens
-    #         tot_cost = (cost_in*prompt_tokens) + (cost_out*completion_tokens)
-    #         return tot_cost,tot_tokens
-    #     elif model.startswith("text-davinci"):
-    #         cost_tot = 0.02/1000 # dollars per token
-    #         tot_tokens = prompt_tokens + completion_tokens
-    #         return cost_tot*tot_tokens,tot_tokens
-    #     # elif model is langchain:
-    #     #   use langchain pricing model
-    #     else:
-    #         print("Not 'gpt-3.5' or 'davinci' model")
-    #         return
-
-    #     return gpt_response
-
-    # def get_cost(self):
-    #     return self.cost_information
-    
     def _get_relevant_examples(self, ex):
         """
         Fetches the relevant examples from the examples dictionary based on input_dtype and output_dtype.
@@ -85,9 +50,6 @@ class Funk:
         # Generate the keys based on the input and output data types
         input_key = "in_" + self.input_dtype.__name__
         output_key = "out_" + self.output_dtype.__name__
-        
-        # print("input_key: "+input_key)
-        # print("output_key: "+output_key)
 
         try:
             # Fetch the examples using the generated keys
@@ -108,18 +70,11 @@ class Funk:
         Returns:
         - str: The response from the OpenAI model.
         """
-        # response = openai.Completion.create(engine="text-davinci-003", prompt=prompt, max_tokens=100)
-
-        # print("examples in _funkai_main: "+str(ex))
 
         gpt_response = openai.ChatCompletion.create(
             model="gpt-3.5-turbo-16k",
             messages=[
                 {"role": "system", "content": sys_cont},
-                # {"role": "user", "content": ex['example1']['prompt']},
-                # {"role": "assistant", "content": str(ex['example1']['response'])},
-                # {"role": "user", "content": ex['example2']['prompt']},
-                # {"role": "assistant", "content": str(ex['example2']['response'])},
                 {"role": "user", "content": input}
                 ],
             temperature=0,
@@ -144,42 +99,18 @@ class Funk:
         system_content = """Act as a python program. Based on the operation provided, process the input and produce an output. Prioritize precision and correctness in your output.
         Note: Ensure the output matches the specified Python data type because the result will be interpreted as a Python literal. The output must only be the response with no explanation. If unsure, return 'None'.
         """
+        
+        # Check if it's a string
+        if isinstance(input, str):
+            str_input = input
+        else:
+            str_input = str(input)
 
         formatted_input = f"Operation: {self.operation}\nInput: {input}\nOutput data type: {self.output_dtype}"
         the_examples = self._get_relevant_examples(all_prompts)
-        # print("the_examples: "+str(the_examples))
         raw_output = self._funkai_main(system_content,the_examples,formatted_input)
         raw_output_str = Funk._clean_gpt_response(raw_output)
-
-        # raw_output = self._funkai_main(prompt)
-        # raw_output_str = Funk._clean_gpt_response(raw_output)
-        
-        # get cost info
         timestamp = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-        # cost_for_this_run, tokens_used = Funk._approx_cost(raw_output)
-
-        # self.cost_information["runs"].append({
-        #     "timestamp": timestamp,
-        #     "funk_name": self.name,
-        #     "tokens_used": tokens_used,
-        #     "approx_cost": cost_for_this_run
-        # })
-
-        # # Update the total tokens and approximate cost
-        # self.cost_information["total_tokens"] += tokens_used
-        # self.cost_information["approx_total_cost"] += cost_for_this_run
-
-        # if print_cost:
-        #     # Print information about the current run
-        #     print("\n--- Current Run Information ---")
-        #     print(f"Tokens used for this call: {tokens_used}")
-        #     print(f"Approximate cost for this call: ${cost_for_this_run:.2f}")
-            
-        #     # Print cumulative totals for the session
-        #     print("\n--- Session Totals ---")
-        #     print(f"Total tokens used this session: {self.cost_information['total_tokens']}")
-        #     print(f"Approximate total cost for this session: ${self.cost_information['approx_total_cost']:.2f}")
-        #     print("-----------------------------\n") # To separate the output
 
         # Convert the output to the desired data type
         try:
@@ -261,10 +192,6 @@ class Funk:
         except ValueError:
             raise ValueError(f"Cannot convert '{output_str}' to {target_dtype}")
 
-    # def print_approx_cost(self):
-    #     """Prints the accumulated cost information for the session."""
-    #     # ... (Content remains the same, but maybe store cost info at the instance level too)
-
 # FunkManager Class Definition
 class FunkManager:
     # Methods for managing and operating on multiple Funks
@@ -293,15 +220,3 @@ class FunkManager:
 
     def show(self):
         return list(self.funks.keys())
-
-    # def cost(self):
-    #     return self.get_cost()
-
-####################################
-# ******** USAGE EXAMPLES ********
-####################################
-# manager = FunkManager()
-# manager.add_funk(name="test", operation="do something")
-# result = manager.run_funk(name="test", input="Some input here")
-# print(result)
-# print(manager.list_all_funks())

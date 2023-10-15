@@ -37,30 +37,30 @@ class Funk:
             except:
                 print("Looks like you have your 'LLMONITOR_APP_ID' variable set but didn't install llmonitor. Install llmonitor and rerun.")
 
-    def _get_relevant_examples(self, ex):
-        """
-        Fetches the relevant examples from the examples dictionary based on input_dtype and output_dtype.
+    # def _get_relevant_examples(self, ex):
+    #     """
+    #     Fetches the relevant examples from the examples dictionary based on input_dtype and output_dtype.
 
-        Args:
-        - examples (dict): The dictionary containing all examples.
+    #     Args:
+    #     - examples (dict): The dictionary containing all examples.
 
-        Returns:
-        - list: A list of relevant examples based on input and output data types.
-        """
-        # Generate the keys based on the input and output data types
-        input_key = "in_" + self.input_dtype.__name__
-        output_key = "out_" + self.output_dtype.__name__
+    #     Returns:
+    #     - list: A list of relevant examples based on input and output data types.
+    #     """
+    #     # Generate the keys based on the input and output data types
+    #     input_key = "in_" + self.input_dtype.__name__
+    #     output_key = "out_" + self.output_dtype.__name__
 
-        try:
-            # Fetch the examples using the generated keys
-            relevant_examples = ex[input_key][output_key]
-            # print("relevant_examples: "+str(relevant_examples))
-            return relevant_examples
-        except KeyError:
-            # No examples found for the given data types
-            return []
+    #     try:
+    #         # Fetch the examples using the generated keys
+    #         relevant_examples = ex[input_key][output_key]
+    #         # print("relevant_examples: "+str(relevant_examples))
+    #         return relevant_examples
+    #     except KeyError:
+    #         # No examples found for the given data types
+    #         return []
 
-    def _funkai_main(self, sys_cont, ex,input):
+    def _funkai_main(self, sys_cont, input):
         """
         Generates a function response based on the provided prompt.
 
@@ -108,8 +108,8 @@ class Funk:
             str_input = str(input)
 
         formatted_input = f"Operation: {self.operation}\nInput: {input}\nOutput data type: {self.output_dtype}"
-        the_examples = self._get_relevant_examples(all_prompts)
-        raw_output = self._funkai_main(system_content,the_examples,formatted_input)
+        # the_examples = self._get_relevant_examples(all_prompts)
+        raw_output = self._funkai_main(system_content,formatted_input)
         raw_output_str = Funk._clean_gpt_response(raw_output)
         timestamp = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
 

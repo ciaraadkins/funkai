@@ -197,19 +197,16 @@ class Funk:
         
         elif target_dtype == str:
             try:
-                # Convert string representation of bytes (b'...') to actual bytes
-                if type(output_str) is str:
-                    return output_str
-                else:
-                   raise ValueError(f"Cannot convert '{output_str}' to str") 
+                return output_str
             except (ValueError, SyntaxError):
                 raise ValueError(f"Cannot convert '{output_str}' to str")
-                
-        # For basic types like int, float, str, complex
-        try:
-            return target_dtype(output_str)
-        except ValueError:
-            raise ValueError(f"Cannot convert '{output_str}' to {target_dtype}")
+
+        else:     
+            # For basic types like int, float, str, complex
+            try:
+                return target_dtype(output_str)
+            except ValueError:
+                raise ValueError(f"Cannot convert '{output_str}' to {target_dtype}")
 
 # FunkManager Class Definition
 class FunkManager:

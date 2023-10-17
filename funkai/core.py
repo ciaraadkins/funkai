@@ -78,7 +78,7 @@ class Funk:
                 {"role": "user", "content": input}
                 ],
             temperature=0,
-            max_tokens=16000,
+            max_tokens=500,
             tags=["funkai",self.name])
 
         return gpt_response

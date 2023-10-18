@@ -60,7 +60,7 @@ class Funk:
     #         # No examples found for the given data types
     #         return []
 
-    def _funkai_main(self, sys_cont, input):
+    def _funkai_main(self, sys_cont, examples, input):
         """
         Generates a function response based on the provided prompt.
 
@@ -70,20 +70,36 @@ class Funk:
         Returns:
         - str: The response from the OpenAI model.
         """
-
-        gpt_response = openai.ChatCompletion.create(
-            model="gpt-3.5-turbo-16k",
+        try:
             messages=[
                 {"role": "system", "content": sys_cont},
+                {"role": "user", "content": f"Operation: {self.operation}\nInput: {examples['in1']}\nOutput data type: {self.output_dtype}"},
+                {"role": "assistant", "content": examples['out1']},
+                {"role": "user", "content": f"Operation: {self.operation}\nInput: {examples['in2']}\nOutput data type: {self.output_dtype}"},
+                {"role": "assistant", "content": examples['out2']},
+                {"role": "user", "content": f"Operation: {self.operation}\nInput: {examples['in3']}\nOutput data type: {self.output_dtype}"},
+                {"role": "assistant", "content": examples['out3']},
                 {"role": "user", "content": input}
-                ],
-            temperature=0,
-            max_tokens=500,
-            tags=["funkai",self.name])
+                ]
+            max_tok = 1000
+        except:
+            messages=[
+                {"role": "system", "content": sys_cont},
+                {"role": "user", "content": f"Operation: {self.operation}\nInput: {input}\nOutput data type: {self.output_dtype}"}
+                ]
+            max_tok = 300
+        
+        gpt_response = openai.ChatCompletion.create(
+            model="gpt-3.5-turbo-16k"
+            , messages=messages
+            , temperature=0
+            , max_tokens=max_tok
+            # ,tags=["funkai",self.name]
+            )
 
         return gpt_response
 
-    def run(self, input, full_resp):
+    def run(self, input, examples, full_resp):
         """
         Uses a predefined operation to get a response based on input.
         """
@@ -107,9 +123,9 @@ class Funk:
         else:
             str_input = str(input)
 
-        formatted_input = f"Operation: {self.operation}\nInput: {input}\nOutput data type: {self.output_dtype}"
+        # formatted_input = f"Operation: {self.operation}\nInput: {input}\nOutput data type: {self.output_dtype}"
         # the_examples = self._get_relevant_examples(all_prompts)
-        raw_output = self._funkai_main(system_content,formatted_input)
+        raw_output = self._funkai_main(system_content,examples,input)
         raw_output_str = Funk._clean_gpt_response(raw_output)
         timestamp = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
 
@@ -228,11 +244,11 @@ class FunkManager:
             raise ValueError(f"No Funk with name '{name}' found.")
         del self.funks[name]
 
-    def run(self, name, input, full_resp=False):
+    def run(self, name, input, examples=None,full_resp=False):
         funk = self._get(name)
         if not funk:
             raise ValueError(f"No Funk with name '{name}' found.")
-        return funk.run(input, full_resp)
+        return funk.run(input, examples, full_resp)
 
     def show(self):
         return list(self.funks.keys())

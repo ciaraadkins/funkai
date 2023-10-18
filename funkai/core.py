@@ -73,11 +73,11 @@ class Funk:
         try:
             messages=[
                 {"role": "system", "content": sys_cont},
-                {"role": "user", "content": f"Operation: {self.operation}\nInput: {examples['in1']}\nOutput data type: {self.output_dtype}"},
+                {"role": "user", "content": f"Operation: {self.operation}\nInput: {str(examples['in1'])}\nOutput data type: {self.output_dtype}"},
                 {"role": "assistant", "content": examples['out1']},
-                {"role": "user", "content": f"Operation: {self.operation}\nInput: {examples['in2']}\nOutput data type: {self.output_dtype}"},
+                {"role": "user", "content": f"Operation: {self.operation}\nInput: {str(examples['in2'])}\nOutput data type: {self.output_dtype}"},
                 {"role": "assistant", "content": examples['out2']},
-                {"role": "user", "content": f"Operation: {self.operation}\nInput: {examples['in3']}\nOutput data type: {self.output_dtype}"},
+                {"role": "user", "content": f"Operation: {self.operation}\nInput: {str(examples['in3'])}\nOutput data type: {self.output_dtype}"},
                 {"role": "assistant", "content": examples['out3']},
                 {"role": "user", "content": input}
                 ]
@@ -125,7 +125,7 @@ class Funk:
 
         # formatted_input = f"Operation: {self.operation}\nInput: {input}\nOutput data type: {self.output_dtype}"
         # the_examples = self._get_relevant_examples(all_prompts)
-        raw_output = self._funkai_main(system_content,examples,input)
+        raw_output = self._funkai_main(system_content,examples,str_input)
         raw_output_str = Funk._clean_gpt_response(raw_output)
         timestamp = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
 

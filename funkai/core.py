@@ -93,7 +93,7 @@ class Funk:
             model="gpt-3.5-turbo-16k"
             , messages=messages
             , temperature=0
-            , max_tokens=max_tok
+            , max_tokens=15000
             # ,tags=["funkai",self.name]
             )
 

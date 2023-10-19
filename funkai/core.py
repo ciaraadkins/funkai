@@ -87,13 +87,13 @@ class Funk:
                 {"role": "system", "content": sys_cont},
                 {"role": "user", "content": f"Operation: {self.operation}\nInput: {input}\nOutput data type: {self.output_dtype}"}
                 ]
-            max_tok = 300
+            max_tok = 500
         
         gpt_response = openai.ChatCompletion.create(
             model="gpt-3.5-turbo-16k"
             , messages=messages
             , temperature=0
-            , max_tokens=15000
+            , max_tokens=max_tok
             # ,tags=["funkai",self.name]
             )
 

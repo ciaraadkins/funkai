@@ -2,11 +2,10 @@ from setuptools import setup, find_packages
 
 setup(
     name="funkai",
-    version="0.2",
+    version="0.6",
     packages=find_packages(),
     install_requires=[
-        "openai",  # Assuming you're using the openai package
-        # Add other dependencies if needed
+        "openai",  'llmonitor'
     ],
     author="Ciara Adkins",
     author_email="adkins.ciara@gmail.com.com",

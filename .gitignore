@@ -2,3 +2,6 @@
 /funkai.egg-info
 test.py
 /dist
+__pycache__
+.vscode
+patchfile

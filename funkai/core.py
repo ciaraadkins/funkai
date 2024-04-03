@@ -129,10 +129,17 @@ class Funk:
             return _convert(target_dtype, "conversion error")
 
 class FunkManager:
-    def __init__(self):
+    def __init__(self, api_key, model="gpt-3.5-turbo"):
+        self.api_key = api_key
+        self.model = model
         self.funks = {}
 
-    def add(self, name, operation, api_key, retry_count=0, input_dtype=str, output_dtype=str, model="gpt-3.5-turbo-16k"):
+    def add(self, name, operation, api_key=None, model=None, retry_count=0, input_dtype=str, output_dtype=str):
+        if api_key is None:
+            api_key = self.api_key
+        if model is None:
+            model = self.model
+
         if name in self.funks:
             raise ValueError(f"A Funk with name '{name}' already exists.")
         new_funk = Funk(name, operation, api_key, retry_count, input_dtype, output_dtype, model)
@@ -140,6 +147,19 @@ class FunkManager:
             raise ValueError("Invalid Funk Parameters.")
         else:
             self.funks[name] = new_funk
+
+    def update(self, name, **kwargs):
+        funk = self._get(name)
+        if not funk:
+            raise ValueError(f"No Funk with name '{name}' found.")
+        
+        for key, value in kwargs.items():
+            if hasattr(funk, key):
+                setattr(funk, key, value)
+            else:
+                raise ValueError(f"Invalid parameter '{key}' for Funk instance.")
+
+        self.funks[name] = funk
         
     def _get(self, name):
         return self.funks.get(name, None)

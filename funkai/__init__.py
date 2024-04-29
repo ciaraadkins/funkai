@@ -1,1 +1,2 @@
-from .core import Funk, FunkManager
+from .openai import OpenAIFunk
+from .claude import ClaudeFunk

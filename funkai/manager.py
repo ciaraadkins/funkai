@@ -6,14 +6,14 @@ class FunkManager:
         self.default_model = default_model
         self.funks = {}
 
-    def add(self, name, operation, api_key=None, model=None, retry_count=0, input_dtype=str, output_dtype=str):
+    def add(self, name, operation, options, api_key=None, model=None, retry_count=0, input_dtype=str, output_dtype=str):
         api_key = api_key or self.api_key
         model = model or self.default_model
 
         if name in self.funks:
             raise ValueError(f"A Funk with name '{name}' already exists.")
         
-        new_funk = Funk(self.provider, name, operation, api_key, model, retry_count, input_dtype, output_dtype)
+        new_funk = Funk(self.provider, name, operation, api_key, model, options, retry_count, input_dtype, output_dtype)
         if new_funk.error:
             raise ValueError("Invalid Funk Parameters.")
         

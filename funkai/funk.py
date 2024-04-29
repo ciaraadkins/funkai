@@ -4,7 +4,7 @@ import openai
 import anthropic
 
 class Funk:
-    def __init__(self, provider, name, operation, api_key, model, retry_count=0, input_dtype=str, output_dtype=str):
+    def __init__(self, provider, name, operation, api_key, model, options, retry_count=0, input_dtype=str, output_dtype=str):
         self.name = name
         self.operation = operation
         self.input_dtype = input_dtype
@@ -13,6 +13,7 @@ class Funk:
         self.model = model
         self.error = False
         self.provider = provider
+        self.options = options
         self.set_api_key(api_key)
         self.restricted_models(model)
 
@@ -63,30 +64,33 @@ class Funk:
         max_tokens = 1000 if len(messages) > 1 else 500
 
         try:
+            options = {
+                'temperature': self.options.get('temperature', 0.7),
+                'max_tokens': self.options.get('max_tokens', max_tokens),
+            }
+
             if self.provider == 'openai':
                 response = openai.chat.completions.create(
                     model=self.model,
                     messages=messages,
-                    temperature=0.7,
-                    max_tokens=max_tokens
+                    **options
                 )
-            else: 
+            else:
                 client = anthropic.Anthropic(api_key=self.api_key)
                 response = client.messages.create(
                     model=self.model,
-                    max_tokens=max_tokens,
                     messages=messages,
+                    **options
                 )
 
             return response
-        
+
         except (openai.OpenAIError, Exception) as e:
             if self.retry_count > 0:
                 self.retry_count -= 1
                 return self._funkai_main(sys_cont, examples, input_content)
             else:
                 raise e
-
 
     def run(self, input_content, examples=None, full_resp=False):
         if not isinstance(input_content, self.input_dtype):

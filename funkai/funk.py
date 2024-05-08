@@ -76,10 +76,14 @@ class Funk:
                     **options
                 )
             else:
+                system = messages[0]['content']
+                del messages[0]
+
                 client = anthropic.Anthropic(api_key=self.api_key)
                 response = client.messages.create(
                     model=self.model,
                     messages=messages,
+                    system=str(system),
                     **options
                 )
 
@@ -118,8 +122,8 @@ class Funk:
 
     @staticmethod
     def _clean_gpt_response(response):
-        if 'content' in response:
-            return response.content
+        if response and response.content:
+            return response.content[0].text
         else:
             return response.choices[0].message.content
 

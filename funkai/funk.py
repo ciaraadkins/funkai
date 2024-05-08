@@ -122,10 +122,12 @@ class Funk:
 
     @staticmethod
     def _clean_gpt_response(response):
-        if response and response.content:
+        if hasattr(response, 'content') and response.content:
             return response.content[0].text
-        else:
+        elif hasattr(response, 'choices') and response.choices:
             return response.choices[0].message.content
+        else:
+            return None 
 
     @staticmethod
     def _convert_output(output_str, target_dtype):

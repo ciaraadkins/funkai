@@ -1,11 +1,11 @@
 # Funkai Library
 
-Funkai is a Python library that encapsulates linguistic operations and uses OpenAI to perform them based on user inputs.
+Funkai is a Python library that encapsulates linguistic operations and uses OpenAI or Claude to perform them based on user inputs.
 
 ## Features
 
 - Diverse Operations: Easily define linguistic tasks that can process various data types.
-- Interaction with OpenAI: Seamlessly connect and utilize the OpenAI API to run operations.
+- Interaction with LLM: Seamlessly connect and utilize the LLM (OpenAI or Claude) API to run operations.
 - Dynamic Management: Add, remove, and run operations on-the-fly with the FunkManager.
 
 ## Funkai Setup
@@ -25,16 +25,14 @@ pip install ./funkai/
 
 Once installed, import the necessary modules:
 
-```python
-from funkai import FunkManager
-```
-
 ## OpenAI Setup
 
 For the OpenAI functionality to work, you need to set up your OpenAI API key with init of FunkManager
 
 ```python
-funk = FunkManager(
+from funkai import OpenAIFunk
+
+funk = OpenAIFunk(
         model="gpt-4-turbo-preview",
         api_key='OPEN_API_KEY'
     )
@@ -47,9 +45,22 @@ pip install openai llmonitor
 os.environ["LLMONITOR_APP_ID"] = "YOUR_LLMONITOR_APP_ID"
 ```
 
+## Claude Setup
+
+For the Claude functionality to work, you need to set up your Claude API key with init of FunkManager
+
+```python
+from funkai import ClaudeFunk
+
+funk = ClaudeFunk(
+        model="claude-3-opus-20240229",
+        api_key='CLAUDE_API_KEY'
+    )
+```
+
 # Methods
 
-###### `add(name, operation, api_key=None, model=None, retry_count=0, input_dtype=str, output_dtype=str)`
+###### `add(name, operation, api_key=None, model=None, retry_count=0, input_dtype=str, output_dtype=str, options={'temperature': int, 'max_tokens': int})`
 
 Add a new Funk instance to the manager.
 
@@ -57,11 +68,12 @@ Add a new Funk instance to the manager.
 
 - `name`: Unique identifier for the Funk instance.
 - `operation`: Description of the operation or task performed by the Funk instance.
-- `api_key`: API key for accessing the OpenAI GPT API. If not provided, the API key from FunkManager will be used.
+- `api_key`: API key for accessing the LLM API. If not provided, the API key from FunkManager will be used.
 - `model`: Model to be used for the Funk instance. If not provided, the default model from FunkManager will be used.
 - `retry_count`: Number of retries allowed if there's an error during execution (default is 0).
 - `input_dtype`: Data type expected for input to the Funk instance (default is `str`).
 - `output_dtype`: Data type expected for output from the Funk instance (default is `str`).
+- `options`: Allows you to pass parameters such as `temperate` and `max_tokens` to each jobs.
 
 #### Raises:
 
@@ -104,7 +116,7 @@ Execute a Funk operation by name.
 
 ```python
 # Initialize FunkManager
-manager = FunkManager(model="gpt-4-turbo-preview", api_key="YOUR_OPENAI_API_KEY")
+manager = OpenAIFunk(model="gpt-4-turbo-preview", api_key="YOUR_OPENAI_API_KEY")
 
 # Add a new Funk instance
 manager.add(name="example_funk", operation="Perform a sample task")
@@ -131,7 +143,7 @@ my_funks.run("find fruit", items)
 
 ## Prerequisites
 
-This library is built on top of the OpenAI API. Ensure you have the OpenAI Python client installed and configured.
+This library is built on top of the OpenAI & Claude API. Ensure you have the OpenAI or Claude Python client installed and configured.
 
 ## Contributing
 
